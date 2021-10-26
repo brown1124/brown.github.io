@@ -1,89 +1,72 @@
-// $(function() {
-//   // drawer.js
-//   $( '.drawer' ).drawer()
+$(function() {
+  // drawerjs
+  $( '.drawer' ).drawer()
 
-// });
-
-jQuery(".drawer_icon").on("click", function (e) {
-  e.preventDefault();
-
-  jQuery('.drawer_icon').toggleClass('is-active');
-  jQuery('.drawer_content').toggleClass('is-active');
-  jQuery('.drawer_background').toggleClass('is-active');
-
-  $('.drawer_content_item').click(function () {
-    $('.drawer_icon').trigger('click');
-  });
-
-
-
+  // smoothscroll
+  // #から始まるURLがクリックされた時
+jQuery('a[href^="#"]').click(function() {
+  // 移動速度を指定（ミリ秒）
+  let speed = 300;
+  // hrefで指定されたidを取得
+  let id = jQuery(this).attr("href");
+  // idの値が#のみだったらターゲットをhtmlタグにしてトップへ戻るようにする
+  let target = jQuery("#" == id ? "html" : id);
+  // ページのトップを基準にターゲットの位置を取得
+  let position = jQuery(target).offset().top;
+  // ターゲットの位置までspeedの速度で移動
+  jQuery("html, body").animate(
+    {
+      scrollTop: position - $('#js-header').outerHeight()
+   },
+    speed
+  );
   return false;
 });
 
+  // wowjs
+  new WOW().init()
+
+  // googleform
+  let $form = $('#js-form')
+  $form.submit(function(e) { 
+    $.ajax({ 
+     url: $form.attr('action'), 
+     data: $form.serialize(), 
+     type: "POST", 
+     dataType: "xml", 
+     statusCode: { 
+        0: function() { 
+          //送信に成功したときの処理 
+          $form.slideUp()
+          $('#js-success').slideDown()
+        }, 
+        200: function() { 
+          //送信に失敗したときの処理 
+          $form.slideUp()
+          $('#js-error').slideDown()
+        }
+      } 
+    });
+    return false; 
+  }); 
+
+  // formの入力確認
+  let $submit = $('#js-submit')
+  $('#js-form input, #js-form textarea').on('change', function() {
+    if(
+      $('#js-form input[type="text"]').val() !=="" &&
+      $('#js-form input[type="email"]').val() !=="" &&
+      $('#js-form input[name="entry.613325104"]').prop('checked') === true
+      ) {
+        // 全て入力された時
+        $submit.prop('disabled', false)
+        $submit.addClass('-active')
+      } else {
+        // 全て入力されていない時
+        $submit.prop('disabled', true)
+        $submit.removeClass('-active')
+      }
+  })
 
 
-
-
-
-const swiper = new Swiper('.swiper-container', {
-  // Optional parameters
-  loop: true,
-  loopedSlides: 2,
-  slidesPerView: 'auto',
-  width: 400,
-  spaceBetween: 40,
-  breakpoints: {
-    375: {
-      spaceBetween: 20
-    },
-    767: {
-      spaceBetween: 40
-    }
-  },
-
-
-  // If we need pagination
-  pagination: {
-    el: '.swiper-pagination',
-    type: 'bullets',
-    clickable: true,
-  },
-
-
-});
-
-jQuery(function ($) {
-  $('.qa_box_q').on('click', function () {
-    jQuery(this).next().slideToggle();
-    jQuery(this).children('.qa_box_p').toggleClass('is_open');
-  });
-
-});
-
-//スムーススクロール
-jQuery('a[href^="#"]').on('click', function () { //href=#の値を取得したら
-
-  var header = jQuery('.header').innerHeight(); //headerの高さを取得
-  var id = jQuery(this).attr('href'); 
-  var position = 0; //#だけの場合は0を取得する
-  if ( id != '#') { //#だけではないものを取得した場合
-    var position = jQuery(id).offset().top - header; //offsetの位置を取得する
-  }
-  jQuery('html,body').animate({
-    scrollTop: position
-  },
-  400);
-});
-
-//totopのボタンをスクロールに応じて表示させる
-jQuery(window).on('scroll', function() {
-  if ( 200 < jQuery(this).scrollTop()) { //200pxスクロールされた時
-    jQuery('.to_top').addClass('is-show'); //is-showというクラスを付与する
-  } else {
-    jQuery('.to_top').removeClass('is-show'); //200px未満の時、is-showというクラスは外す
-  }
-
-
-
-});
-
+})
